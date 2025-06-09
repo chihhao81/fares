@@ -1,5 +1,6 @@
+// 等待 HTML 文件完全載入後再執行
 document.addEventListener('DOMContentLoaded', function() {
-    // 獲取新的 HTML 元素
+    // 獲取 HTML 元素
     const distanceInput = document.getElementById('distance');
     const timeInput = document.getElementById('time');
     const baseFareInput = document.getElementById('baseFare');
@@ -19,11 +20,22 @@ document.addEventListener('DOMContentLoaded', function() {
             return; // 結束執行
         }
 
-        // 根據公式計算總金額
-        // 金額 = 公里*15 + 分鐘*3 + 起始價
-        const totalFare = (distance * 15) + (time * 3) + baseFare;
+        // --- 主要計算邏輯更新 ---
 
-        // 將結果顯示到頁面上，使用 Math.round() 四捨五入到整數
+        // 1. 先計算基礎費用 (公里*15 + 分鐘*3 + 起始價)
+        let totalFare = (distance * 15) + (time * 3) + baseFare;
+
+        // 2. 判斷公里數是否超過 20 公里
+        if (distance > 20) {
+            // 計算超過的公里數
+            const extraDistance = distance - 20;
+            // 計算額外加收的費用 (每公里多10元)
+            const surcharge = extraDistance * 10;
+            // 將額外費用加到總金額上
+            totalFare += surcharge;
+        }
+
+        // 3. 將最終結果顯示到頁面上，四捨五入到整數
         resultDiv.innerHTML = `<p>預估車資為 ${Math.round(totalFare)} 元</p>`;
     });
 });
